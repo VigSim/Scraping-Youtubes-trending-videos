@@ -24,10 +24,10 @@ tree=html.document_fromstring(page)
 
 # In[48]:
 
+#Getting URLs
 base_url='http://www.youtube.com'
 a_tags_1=tree.xpath('//a[@class="yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink      spf-link "]')
 a_tags_2=tree.xpath('//a[@class=" yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink      spf-link "]')
-len(a_tags_1)
 
 
 # In[57]:
@@ -36,7 +36,6 @@ urls=[]
 for i in a_tags_1:
     urls.append(i.get("href"))
 urls = [base_url + i for i in urls]
-len(urls)
 
 
 # In[58]:
@@ -45,7 +44,6 @@ urls_6=[]
 for i in a_tags_2:
     urls_6.append(i.get("href"))
 urls_6 = [base_url + i for i in urls_6]
-len(urls)
 
 
 # In[62]:
