@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[65]:
+# In[1]:
 
 import requests, re, json
 from bs4 import BeautifulSoup
@@ -11,7 +11,7 @@ import numpy as np
 from numpy import s_
 
 
-# In[3]:
+# In[2]:
 
 url='https://www.youtube.com/feed/trending'
 content=requests.get(url)
@@ -19,22 +19,15 @@ page=content.text
 soup=BeautifulSoup(page,'lxml')
 
 
-# In[4]:
+# In[13]:
 
+#Getting URLs
 base_url='http://www.youtube.com'
 a_tags_1=soup.findAll('a', attrs={'class':'yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link '})
-
-
-# In[94]:
-
 urls=[]
 for i in a_tags_1:
     urls.append(i.get("href"))
 urls = [base_url + i for i in urls]
-
-
-# In[31]:
-
 a_tags_2=soup.findAll('a', attrs={'class':' yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link '})
 a_tags_2
 urls_6=[]
@@ -47,8 +40,9 @@ urls_all=urls_first_4+urls_6+urls_last_68
 len(urls_all)
 
 
-# In[34]:
+# In[5]:
 
+# Getting titles
 titles_1=[]
 for i in a_tags_1:
      titles_1.append(i.text)
@@ -61,43 +55,29 @@ titles=titles_first_4+titles_2+titles_last_68
 len(titles)
 
 
-# In[37]:
+# In[6]:
 
+#Getting durations
 span_tags=soup.findAll('span', attrs={'class':'video-time'})
-
-
-# In[38]:
-
 durations=[]
 for i in span_tags:
     durations.append(i.text)
 len(durations)
 
 
-# In[39]:
+# In[9]:
 
+#Getting Usernames
 a_tags_1=soup.findAll('a', attrs={'class':'g-hovercard yt-uix-sessionlink spf-link '})
-
-
-# In[40]:
-
 usernames=[]
 for i in a_tags_1:
     usernames.append(i.text)
 len(usernames)
 
 
-# In[74]:
+# In[7]:
 
-views=[]
-ul_tags=soup.findAll('ul', attrs={'class':'yt-lockup-meta-info'})
-for i in ul_tags:
-    views.append(i.findChildren()[1].text)
-len(views)
-
-
-# In[88]:
-
+#Getting views
 views=[]
 views_all=[]
 ul_tags=soup.findAll('ul', attrs={'class':'yt-lockup-meta-info'})
@@ -117,8 +97,9 @@ for i in views_last:
 len(views_all)
 
 
-# In[89]:
+# In[10]:
 
+#Appending data into a list
 data_list=[]
 for i in range(0, len(views)):
     video={'1 Video Title': titles[i],
@@ -129,16 +110,28 @@ for i in range(0, len(views)):
     data_list.append(video)
 
 
-# In[90]:
+# In[11]:
 
+#Creating a json file
 with open('Trending.json', 'w') as file:
     json.dump(data_list, file, sort_keys=True, indent=4)
 
 
-# In[92]:
+# In[12]:
 
+#Creating a csv file
 data_frame=pd.DataFrame(data_list)
 data_frame.to_csv('Trending.csv', index= False)
+
+
+# In[14]:
+
+#Calculating average number of views
+data_frame['3 Views'] = data_frame['3 Views'].str.split(' ', 1).str[0]
+for i in range (0, len(data_frame['3 Views'])):
+    data_frame['3 Views'][i]=re.sub(',',"", str(data_frame['3 Views'][i]))
+data_frame['3 Views']=data_frame['3 Views'].astype(np.int64)
+int(data_frame["3 Views"].mean())
 
 
 # In[ ]:
